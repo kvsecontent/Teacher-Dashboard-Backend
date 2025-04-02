@@ -24,26 +24,35 @@ if (!process.env.SPREADSHEET_ID) {
   process.exit(1);
 }
 
-if (!process.env.GOOGLE_CREDENTIALS) {
-  console.error('ERROR: GOOGLE_CREDENTIALS is required in .env file');
+if (!process.env.API_KEY) {
+  console.error('ERROR: API_KEY is required in .env file');
   process.exit(1);
 }
 
-// Initialize Google Sheets API
-let credentials;
-try {
-  credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
-} catch (error) {
-  console.error('ERROR: GOOGLE_CREDENTIALS must be a valid JSON string');
-  process.exit(1);
-}
-
-const auth = new google.auth.GoogleAuth({
-  credentials: credentials,
-  scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+// Initialize Google Sheets API with API key authentication
+const sheets = google.sheets({
+  version: 'v4',
+  auth: process.env.API_KEY
 });
+const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 
-const sheets = google.sheets({ version: 'v4', auth });
+// Google Sheets Configuration
+// Validate required environment variables
+if (!process.env.SPREADSHEET_ID) {
+  console.error('ERROR: SPREADSHEET_ID is required in .env file');
+  process.exit(1);
+}
+
+if (!process.env.API_KEY) {
+  console.error('ERROR: API_KEY is required in .env file');
+  process.exit(1);
+}
+
+// Initialize Google Sheets API with API key authentication
+const sheets = google.sheets({
+  version: 'v4',
+  auth: process.env.API_KEY
+});
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 
 // Test Google Sheets connection on startup
@@ -56,7 +65,7 @@ async function testSheetsConnection() {
     console.log(`Successfully connected to Google Sheet: "${response.data.properties.title}"`);
   } catch (error) {
     console.error('Failed to connect to Google Sheets:', error.message);
-    console.error('Please check your SPREADSHEET_ID and GOOGLE_CREDENTIALS');
+    console.error('Please check your SPREADSHEET_ID and API_KEY');
     process.exit(1);
   }
 }
