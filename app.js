@@ -34,25 +34,7 @@ const sheets = google.sheets({
   version: 'v4',
   auth: process.env.API_KEY
 });
-const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 
-// Google Sheets Configuration
-// Validate required environment variables
-if (!process.env.SPREADSHEET_ID) {
-  console.error('ERROR: SPREADSHEET_ID is required in .env file');
-  process.exit(1);
-}
-
-if (!process.env.API_KEY) {
-  console.error('ERROR: API_KEY is required in .env file');
-  process.exit(1);
-}
-
-// Initialize Google Sheets API with API key authentication
-const sheets = google.sheets({
-  version: 'v4',
-  auth: process.env.API_KEY
-});
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 
 // Test Google Sheets connection on startup
@@ -66,7 +48,8 @@ async function testSheetsConnection() {
   } catch (error) {
     console.error('Failed to connect to Google Sheets:', error.message);
     console.error('Please check your SPREADSHEET_ID and API_KEY');
-    process.exit(1);
+    // Don't exit - allow the server to start even if there's an initial connection issue
+    console.log('Continuing server startup despite connection issue...');
   }
 }
 
